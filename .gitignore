@@ -1,0 +1,13 @@
+# Generated
+node_modules
+bower_components
+build
+lib
+temp
+
+# IntelliJ IDEA
+.idea
+*.iml
+
+#Build
+

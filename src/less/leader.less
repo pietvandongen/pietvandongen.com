@@ -1,0 +1,13 @@
+@leader-height: 150px;
+@avatar-height: 120px;
+
+.leader {
+    background: @color-green url("/build/images/pattern.png") center 0 repeat;
+    height: @leader-height;
+
+    .avatar {
+        border: (@avatar-height / 20) solid @color-white;
+        height: @avatar-height;
+        margin-top: @leader-height - (@avatar-height / 2);
+    }
+}
