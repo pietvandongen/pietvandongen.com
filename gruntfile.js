@@ -60,8 +60,8 @@ module.exports = function (grunt) {
         image_resize: {
             avatar: {
                 options: {
-                    height: 180,
-                    width: 180
+                    height: 360,
+                    width: 360
                 },
                 files: {
                     'temp/images/avatar.png': 'temp/images/avatar.png'
