@@ -8,6 +8,7 @@ module.exports = function (grunt) {
                 dest: 'build/images/favicons'
             }
         },
+
         pkg: grunt.file.readJSON('package.json'),
 
         bower: {
@@ -19,6 +20,24 @@ module.exports = function (grunt) {
         },
 
         copy: {
+            html: {
+                expand: true,
+                flatten: true,
+                src: [
+                    'src/index.html'
+                ],
+                dest: 'dist',
+            },
+
+            images: {
+                expand: true,
+                flatten: true,
+                src: [
+                    'images/**'
+                ],
+                dest: 'dist/images',
+            },
+
             fonts: {
                 expand: true,
                 flatten: true,
@@ -30,7 +49,7 @@ module.exports = function (grunt) {
                     'fontawesome-webfont.woff',
                     'fontawesome-webfont.woff2'
                 ],
-                dest: 'build/fonts',
+                dest: 'dist/fonts',
                 filter: 'isFile'
             }
         },
@@ -43,7 +62,7 @@ module.exports = function (grunt) {
                 options: {
                     import: 2
                 },
-                src: ['build/css/main.css']
+                src: ['dist/css/main.css']
             }
         },
 
@@ -52,40 +71,8 @@ module.exports = function (grunt) {
                 rebase: false
             },
             minify: {
-                src: 'build/css/main.css',
-                dest: 'build/css/main.min.css'
-            }
-        },
-
-        image_resize: {
-            avatar: {
-                options: {
-                    height: 360,
-                    width: 360
-                },
-                files: {
-                    'temp/images/avatar.png': 'temp/images/avatar.png'
-                }
-            }
-        },
-
-        imagemin: {
-            build: {
-                options: {
-                    optimizationLevel: 6,
-                    use: [mozJpeg()]
-                },
-                files: [
-                    {
-                        expand: true,
-                        cwd: 'temp/images',
-                        src: [
-                            '**/*.{jpg,png,gif}',
-                            '!favicon/*.*'
-                        ],
-                        dest: 'build/images'
-                    }
-                ]
+                src: 'dist/css/main.css',
+                dest: 'dist/css/main.min.css'
             }
         },
 
@@ -96,52 +83,8 @@ module.exports = function (grunt) {
                     cleancss: false
                 },
                 files: {
-                    'build/css/main.css': 'src/less/main.less'
+                    'dist/css/main.css': 'src/less/main.less'
                 }
-            }
-        },
-
-        mkdir: {
-            favicons: {
-                options: {
-                    create: ['build/images/favicons']
-                }
-            }
-        },
-
-        shell: {
-            generateFavicons: {
-                options: {
-                    stdin: false
-                },
-                command: [
-                    'convert <%= vars.favicons.src %> -resize 16x16 <%= vars.favicons.dest %>/16x16.png',
-                    'convert <%= vars.favicons.src %> -resize 32x32 <%= vars.favicons.dest %>/32x32.png',
-                    'convert <%= vars.favicons.src %> -resize 48x48 <%= vars.favicons.dest %>/48x48.png',
-                    'convert <%= vars.favicons.dest %>/16x16.png <%= vars.favicons.dest %>/32x32.png <%= vars.favicons.dest %>/48x48.png -alpha on -background none  <%= vars.favicons.dest %>/favicon.ico',
-                    'convert <%= vars.favicons.src %> -resize 64x64 <%= vars.favicons.dest %>/favicon.png'
-                ].join('&&')
-            }
-        },
-
-        svg2png: {
-            avatar: {
-                files: [{
-                    src: ['src/images/avatar.svg'],
-                    dest: 'temp/images'
-                }]
-            },
-            favicon: {
-                files: [{
-                    src: ['src/images/favicon.svg'],
-                    dest: 'temp/images'
-                }]
-            },
-            pattern: {
-                files: [{
-                    src: ['src/images/pattern.svg'],
-                    dest: 'temp/images'
-                }]
             }
         },
 
@@ -170,28 +113,15 @@ module.exports = function (grunt) {
     grunt.registerTask('default', [
         'clean:generatedResources',
         'bower:install',
-        'buildImages',
         'buildStyles',
+        'copy:html',
+        'copy:images',
         'copy:fonts'
-    ]);
-
-    grunt.registerTask('buildImages', [
-        'generateFavicons',
-        'svg2png:avatar',
-        'svg2png:pattern',
-        'image_resize:avatar',
-        'imagemin:build'
     ]);
 
     grunt.registerTask('buildStyles', [
         'less:compile',
         'csslint:lint',
         'cssmin:minify'
-    ]);
-
-    grunt.registerTask('generateFavicons', [
-        'mkdir:favicons',
-        'svg2png:favicon',
-        'shell:generateFavicons'
     ]);
 };
